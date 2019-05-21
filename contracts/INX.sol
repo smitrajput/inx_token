@@ -5,25 +5,25 @@ pragma solidity ^0.5.0;
  * Math operations with safety checks
  */
 contract SafeMath {
-  function safeMul(uint256 a, uint256 b) internal returns (uint256) {
+  function safeMul(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a * b;
     assert(a == 0 || c / a == b);
     return c;
   }
 
-  function safeDiv(uint256 a, uint256 b) internal returns (uint256) {
+  function safeDiv(uint256 a, uint256 b) internal pure returns (uint256) {
     assert(b > 0);
     uint256 c = a / b;
     assert(a == b * c + a % b);
     return c;
   }
 
-  function safeSub(uint256 a, uint256 b) internal returns (uint256) {
+  function safeSub(uint256 a, uint256 b) internal pure returns (uint256) {
     assert(b <= a);
     return a - b;
   }
 
-  function safeAdd(uint256 a, uint256 b) internal returns (uint256) {
+  function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a + b;
     assert(c>=a && c>=b);
     return c;
@@ -42,6 +42,7 @@ contract INX is SafeMath{
 
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approved(address approver, address spender, uint256 value);
 
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
@@ -79,6 +80,7 @@ contract INX is SafeMath{
         returns (bool success) {
 		require(_value >= 0);
         allowance[msg.sender][_spender] = _value;
+        emit Approved(msg.sender, _spender, _value);
         return true;
     }
        

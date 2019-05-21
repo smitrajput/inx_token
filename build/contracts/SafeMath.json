@@ -1,15 +1,15 @@
 {
   "contractName": "SafeMath",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Math operations with safety checks\"}},\"settings\":{\"compilationTarget\":{\"/home/ankankumardas/Desktop/WandX Internship/Tutorial/Ethereum/Projects/old_inx_token/contracts/INX.sol\":\"SafeMath\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/ankankumardas/Desktop/WandX Internship/Tutorial/Ethereum/Projects/old_inx_token/contracts/INX.sol\":{\"keccak256\":\"0xc6a1d3d9cf2724582fea480c60809cea8dd1b0f70a14d4110b7cb3184e53bec6\",\"urls\":[\"bzzr://c5748905c1a65daf1b8189a752ba691f545efdbd36b1d0728ef95b54d4db36c0\"]}},\"version\":1}",
-  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a723058203a2a592431857c2a9fa48db45caefa474eb43ae36ffdda599046acd8026c0e8f0029",
-  "deployedBytecode": "0x6080604052600080fdfea165627a7a723058203a2a592431857c2a9fa48db45caefa474eb43ae36ffdda599046acd8026c0e8f0029",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Math operations with safety checks\"}},\"settings\":{\"compilationTarget\":{\"/home/sumant/my_work/inx_token/contracts/INX.sol\":\"SafeMath\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/sumant/my_work/inx_token/contracts/INX.sol\":{\"keccak256\":\"0xc6a1d3d9cf2724582fea480c60809cea8dd1b0f70a14d4110b7cb3184e53bec6\",\"urls\":[\"bzzr://c5748905c1a65daf1b8189a752ba691f545efdbd36b1d0728ef95b54d4db36c0\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a723058206fec1c32a34012a2823c6942b59a6cceb33e73ee8159766691e3c0cef572114e0029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a723058206fec1c32a34012a2823c6942b59a6cceb33e73ee8159766691e3c0cef572114e0029",
   "sourceMap": "72:600:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;72:600:1;;;;;;;",
   "deployedSourceMap": "72:600:1:-;;;;;",
   "source": "pragma solidity ^0.5.0;\n\n\n/**\n * Math operations with safety checks\n */\ncontract SafeMath {\n  function safeMul(uint256 a, uint256 b) internal pure returns (uint256) {\n    uint256 c = a * b;\n    assert(a == 0 || c / a == b);\n    return c;\n  }\n\n  function safeDiv(uint256 a, uint256 b) internal pure returns (uint256) {\n    assert(b > 0);\n    uint256 c = a / b;\n    assert(a == b * c + a % b);\n    return c;\n  }\n\n  function safeSub(uint256 a, uint256 b) internal pure returns (uint256) {\n    assert(b <= a);\n    return a - b;\n  }\n\n  function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {\n    uint256 c = a + b;\n    assert(c>=a && c>=b);\n    return c;\n  }\n}\ncontract INX is SafeMath{\n    string public name;\n    string public symbol;\n    uint8 public decimals;\n    uint256 public totalSupply;\n\taddress payable public owner;\n\n    /* This creates an array with all balances */\n    mapping (address => uint256) public balanceOf;\n    mapping (address => mapping (address => uint256)) public allowance;\n\n    /* This generates a public event on the blockchain that will notify clients */\n    event Transfer(address indexed from, address indexed to, uint256 value);\n    event Approved(address approver, address spender, uint256 value);\n\n\n    /* Initializes contract with initial supply tokens to the creator of the contract */\n    constructor(\n        uint256 initialSupply,\n        string memory tokenName,\n        uint8 decimalUnits,\n        string memory tokenSymbol\n        ) public payable {\n        balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens\n        totalSupply = initialSupply;                        // Update total supply\n        name = tokenName;                                   // Set the name for display purposes\n        symbol = tokenSymbol;                               // Set the symbol for display purposes\n        decimals = decimalUnits;                            // Amount of decimals for display purposes\n\t\towner = msg.sender;\n    }\n    \n    // can accept ether\n\tfunction() payable external {\n    }\n\n    /* Send coins */\n    function transfer(address _to, uint256 _value) public {\n        require(_to != address(0x0), 'Invalid \\'to\\' address');\n        require(_value > 0, 'Value must be +ve');\n        require(balanceOf[msg.sender] >= _value);           // Check if the sender has enough\n        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows\n        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                     // Subtract from the sender\n        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                            // Add the same to the recipient\n        emit Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place\n    }\n\n    /* Allow another contract to spend some tokens in your behalf */\n    function approve(address _spender, uint256 _value) public\n        returns (bool success) {\n\t\trequire(_value >= 0);\n        allowance[msg.sender][_spender] = _value;\n        emit Approved(msg.sender, _spender, _value);\n        return true;\n    }\n       \n\n    /* A contract attempts to get the coins */\n    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {\n        require(_to != address(0x0), 'Invalid \\'to\\' address');\n        require(_value > 0, 'Value must be +ve');\n        require(balanceOf[_from] >= _value);           // Check if the sender has enough\n        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows\n        require(_value <= allowance[_from][msg.sender]);     // Check allowance\n        balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value);                           // Subtract from the sender\n        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);                             // Add the same to the recipient\n        allowance[_from][msg.sender] = SafeMath.safeSub(allowance[_from][msg.sender], _value);\n        emit Transfer(_from, _to, _value);\n        return true;\n    }\n}",
-  "sourcePath": "/home/ankankumardas/Desktop/WandX Internship/Tutorial/Ethereum/Projects/old_inx_token/contracts/INX.sol",
+  "sourcePath": "/home/sumant/my_work/inx_token/contracts/INX.sol",
   "ast": {
-    "absolutePath": "/home/ankankumardas/Desktop/WandX Internship/Tutorial/Ethereum/Projects/old_inx_token/contracts/INX.sol",
+    "absolutePath": "/home/sumant/my_work/inx_token/contracts/INX.sol",
     "exportedSymbols": {
       "INX": [
         437
@@ -8623,7 +8623,7 @@
     "src": "0:4098:1"
   },
   "legacyAST": {
-    "absolutePath": "/home/ankankumardas/Desktop/WandX Internship/Tutorial/Ethereum/Projects/old_inx_token/contracts/INX.sol",
+    "absolutePath": "/home/sumant/my_work/inx_token/contracts/INX.sol",
     "exportedSymbols": {
       "INX": [
         437
@@ -17242,7 +17242,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-05-21T07:51:05.856Z",
+  "updatedAt": "2019-05-21T08:33:43.648Z",
   "devdoc": {
     "methods": {}
   },

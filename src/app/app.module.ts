@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import {MetaModule} from './meta/meta.module';
+import { MetaModule } from './meta/meta.module';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
@@ -12,12 +12,15 @@ import {
   MatCardModule,
   MatFormFieldModule,
   MatInputModule,
+  MatSelectModule, MatSnackBarModule, MatOptionModule,
   MatToolbarModule
 } from '@angular/material';
+import { TransferComponent } from './transfer/transfer.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TransferComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -30,7 +33,8 @@ import {
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    MetaModule
+    MetaModule,
+    MatSelectModule, MatSnackBarModule, MatOptionModule
   ],
   providers: [],
   bootstrap: [AppComponent]

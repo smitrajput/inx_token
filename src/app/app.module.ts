@@ -16,11 +16,15 @@ import {
   MatToolbarModule
 } from '@angular/material';
 import { TransferComponent } from './transfer/transfer.component';
+import { ApproveComponent } from './approve/approve.component';
+import { TransferFromComponent } from './transfer-from/transfer-from.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TransferComponent
+    TransferComponent,
+    ApproveComponent,
+    TransferFromComponent
   ],
   imports: [
     BrowserAnimationsModule,

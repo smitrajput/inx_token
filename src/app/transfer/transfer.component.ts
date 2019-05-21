@@ -91,7 +91,7 @@ export class TransferComponent implements OnInit {
       const deployedInternCoin = await this.InternCoin.deployed();
       console.log(deployedInternCoin);
       console.log('Account', this.model.account);
-      const InternCoinBalance = await deployedInternCoin.balanceOf[this.model.account];
+      const InternCoinBalance = await deployedInternCoin.balanceOf(this.model.account);
       console.log('Found balance: ' + InternCoinBalance);
       this.model.balance = InternCoinBalance;
     } catch (e) {

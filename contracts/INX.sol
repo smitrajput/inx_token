@@ -40,6 +40,7 @@ contract INX is SafeMath{
     mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
 
+
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approved(address approver, address spender, uint256 value);
@@ -76,12 +77,10 @@ contract INX is SafeMath{
     }
 
     /* Allow another contract to spend some tokens in your behalf */
-    function approve(address _spender, uint256 _value) public
-        returns (bool success) {
-		require(_value >= 0);
+    function approve(address _spender, uint256 _value) public {
+		    require(_value >= 0, 'Value must be +ve');
         allowance[msg.sender][_spender] = _value;
         emit Approved(msg.sender, _spender, _value);
-        return true;
     }
        
 
@@ -97,5 +96,9 @@ contract INX is SafeMath{
         allowance[_from][msg.sender] = SafeMath.safeSub(allowance[_from][msg.sender], _value);
         emit Transfer(_from, _to, _value);
         return true;
+    }
+
+    function getAllowance(address _from, address _to) public returns(uint256 value) {
+      return allowance[_from][_to];
     }
 }

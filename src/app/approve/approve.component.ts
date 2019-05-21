@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Web3Service } from '../util/web3.service';
 import { MatSnackBar } from '@angular/material';
-
+declare let window: any;
 declare let require: any;
-const metacoin_artifacts = require('../../../build/contracts/MetaCoin.json');
+const inx_artifacts = require('../../../build/contracts/INX.json');
 
 
 @Component({
@@ -13,33 +13,32 @@ const metacoin_artifacts = require('../../../build/contracts/MetaCoin.json');
 })
 export class ApproveComponent implements OnInit {
   accounts: string[];
-  MetaCoin: any;
+  InternCoin: any;
 
   model = {
     amount: 5,
-    receiver: '',
-    balance: 0,
+    spender: '',
     account: ''
   };
 
   status = '';
 
   constructor(private web3Service: Web3Service, private matSnackBar: MatSnackBar) {
-    console.log('Constructor: ' + web3Service);
+    console.log('Constructor: ', web3Service);
   }
 
   ngOnInit(): void {
     console.log('OnInit: ' + this.web3Service);
     console.log(this);
     this.watchAccount();
-    this.web3Service.artifactsToContract(metacoin_artifacts)
-      .then((MetaCoinAbstraction) => {
-        this.MetaCoin = MetaCoinAbstraction;
-        this.MetaCoin.deployed().then(deployed => {
+    this.web3Service.artifactsToContract(inx_artifacts)
+      .then((InternCoinAbstraction) => {
+        this.InternCoin = InternCoinAbstraction;
+        this.InternCoin.deployed().then(deployed => {
           console.log(deployed);
           deployed.Transfer({}, (err, ev) => {
             console.log('Transfer event came in, refreshing balance');
-            this.refreshBalance();
+            //his.refreshBalance();
           });
         });
 
@@ -50,7 +49,7 @@ export class ApproveComponent implements OnInit {
     this.web3Service.accountsObservable.subscribe((accounts) => {
       this.accounts = accounts;
       this.model.account = accounts[0];
-      this.refreshBalance();
+      //this.refreshBalance();
     });
   }
 
@@ -58,22 +57,22 @@ export class ApproveComponent implements OnInit {
     this.matSnackBar.open(status, null, { duration: 3000 });
   }
 
-  async sendCoin() {
-    if (!this.MetaCoin) {
-      this.setStatus('Metacoin is not loaded, unable to send transaction');
+  async approve() {
+    if (!this.InternCoin) {
+      this.setStatus('InternCoin is not loaded, unable to send transaction');
       return;
     }
 
     const amount = this.model.amount;
-    const receiver = this.model.receiver;
+    const spender = this.model.spender;
 
-    console.log('Sending coins' + amount + ' to ' + receiver);
+    console.log('Sending coins' + amount + ' to ' + spender);
 
     this.setStatus('Initiating transaction... (please wait)');
     try {
-      const deployedMetaCoin = await this.MetaCoin.deployed();
-      const transaction = await deployedMetaCoin.sendCoin.sendTransaction(receiver, amount, { from: this.model.account });
-
+      const deployedInternCoin = await this.InternCoin.deployed();
+      const transaction = await deployedInternCoin.approve.sendTransaction(spender, amount, { from: this.model.account });
+      console.log(deployedInternCoin.getAllowance.call(spender, this.model.account));
       if (!transaction) {
         this.setStatus('Transaction failed!');
       } else {
@@ -85,30 +84,30 @@ export class ApproveComponent implements OnInit {
     }
   }
 
-  async refreshBalance() {
-    console.log('Refreshing balance');
+  // async refreshBalance() {
+  //   console.log('Refreshing balance');
 
-    try {
-      const deployedMetaCoin = await this.MetaCoin.deployed();
-      console.log(deployedMetaCoin);
-      console.log('Account', this.model.account);
-      const metaCoinBalance = await deployedMetaCoin.getBalance.call(this.model.account);
-      console.log('Found balance: ' + metaCoinBalance);
-      this.model.balance = metaCoinBalance;
-    } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting balance; see log.');
-    }
-  }
+  //   try {
+  //     const deployedMetaCoin = await this.InternCoin.deployed();
+  //     console.log(deployedMetaCoin);
+  //     console.log('Account', this.model.account);
+  //     const metaCoinBalance = await deployedMetaCoin.getBalance.call(this.model.account);
+  //     console.log('Found balance: ' + metaCoinBalance);
+  //     this.model.balance = metaCoinBalance;
+  //   } catch (e) {
+  //     console.log(e);
+  //     this.setStatus('Error getting balance; see log.');
+  //   }
+  // }
 
   setAmount(e) {
     console.log('Setting amount: ' + e.target.value);
     this.model.amount = e.target.value;
   }
 
-  setReceiver(e) {
-    console.log('Setting receiver: ' + e.target.value);
-    this.model.receiver = e.target.value;
+  setSpender(e) {
+    console.log('Setting spender: ' + e.target.value);
+    this.model.spender = e.target.value;
   }
 
 }

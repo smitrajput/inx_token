@@ -13,12 +13,12 @@
 <mat-card>
   <mat-card-content>
     <mat-form-field class="address-field">
-      <input type="text" matInput id="receiver" placeholder="Spender Address" (change)="setReceiver($event)">
+      <input type="text" matInput id="spender" placeholder="Spender Address" (change)="setSpender($event)">
     </mat-form-field>
     <br />
     <mat-form-field>
       <input type="text" matInput id="amount" placeholder="Amount" (change)="setAmount($event)">
     </mat-form-field>
-    <button mat-button id="send" (click)="sendCoin()">Approve</button>
+    <button mat-button id="send" (click)="approve()">Approve</button>
   </mat-card-content>
 </mat-card>

@@ -13,7 +13,7 @@
   <mat-card-header></mat-card-header>
   <mat-card-content>
     <mat-form-field class="address-field">
-      <input type="text" matInput id="receiver" placeholder="From Address" (change)="setReceiver($event)">
+      <input type="text" matInput id="sender" placeholder="From Address" (change)="setSender($event)">
     </mat-form-field>
     <mat-form-field class="address-field">
       <input type="text" matInput id="receiver" placeholder="Receiver Address" (change)="setReceiver($event)">
@@ -23,6 +23,6 @@
       <input type="text" matInput id="amount" placeholder="Amount" (change)="setAmount($event)">
     </mat-form-field>
 
-    <button mat-button id="send" (click)="sendCoin()">Send INX</button>
+    <button mat-button id="send" (click)="sendCoinFrom()">Send INX</button>
   </mat-card-content>
 </mat-card>
